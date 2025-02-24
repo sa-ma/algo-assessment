@@ -12,3 +12,4 @@
 /Users/sama/dev/school/algo-assessment/algo-assessment/obj/Debug/net9.0/algo-assessment.pdb
 /Users/sama/dev/school/algo-assessment/algo-assessment/obj/Debug/net9.0/algo-assessment.genruntimeconfig.cache
 /Users/sama/dev/school/algo-assessment/algo-assessment/obj/Debug/net9.0/ref/algo-assessment.dll
+/Users/sama/dev/school/algo-assessment/algo-assessment/obj/Debug/net9.0/algo-assessment.sourcelink.json

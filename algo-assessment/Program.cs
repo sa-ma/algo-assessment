@@ -19,9 +19,8 @@ namespace starterCode
             int numberWords = 0;
 
             //3. Store the number of occurrences of each word in a dictionary
-            Dictionary<string, int> wordCounts = new Dictionary<string, int>();
+            LinkedList wordList = new LinkedList();
 
-            //delimiters are chars that split words in a text file
             char[] delimiters = { ' ', ',', '"', ':', ';', '?', '!', '-', '.', '\'', '*' };
             foreach (string line in linesInFile)
             {
@@ -33,12 +32,8 @@ namespace starterCode
                     if (isWord(word))
                     {
                         numberWords++;
-                        string lowerWord = word.ToLower();
-                        if (wordCounts.ContainsKey(lowerWord))
-                            wordCounts[lowerWord]++;
-                        else
-                            wordCounts[lowerWord] = 1;
-                        Console.Write(lowerWord + ",");
+                        wordList.AddWord(word);
+                        Console.Write(word.ToLower() + ",");
                     }
                 }
                 Console.WriteLine();
@@ -47,40 +42,41 @@ namespace starterCode
             Console.WriteLine(fileName + " contains " + numberWords + " words.");
 
             //1.  Write unique words to file
-            File.WriteAllLines(outputFileName, wordCounts.Keys.OrderBy(w => w));
+            File.WriteAllLines(outputFileName, wordList.GetUniqueWords());
             Console.WriteLine($"Unique words have been saved to {outputFileName}");
 
             //2.  Display number of unique words
-            Console.WriteLine("Number of unique words: " + wordCounts.Count);
+            Console.WriteLine("Number of unique words: " + wordList.Count);
 
             //4.  Display word frequency
             Console.WriteLine("\nWord frequencies:");
-            foreach (var word in wordCounts.OrderByDescending(w => w.Value))
+            foreach (var (word, freq) in wordList.GetWordsOrderedBy(false))
             {
-                Console.WriteLine($"{word.Key}: {word.Value}");
+                Console.WriteLine($"{word}: {freq}");
             }
 
-            // 5a Display word frequency ascending
+             // 5a Display word frequency ascending
             Console.WriteLine("\nWord frequencies ascending:");
-            foreach (var word in wordCounts.OrderBy(w => w.Value))
+            foreach (var (word, freq) in wordList.GetWordsOrderedBy(true))
             {
-                Console.WriteLine($"{word.Key}: {word.Value}");
+                Console.WriteLine($"{word}: {freq}");
             }
 
             // 5b Display word frequency descending
             Console.WriteLine("\nWord frequencies descending:");
-            foreach (var word in wordCounts.OrderByDescending(w => w.Value))
+            foreach (var (word, freq) in wordList.GetWordsOrderedBy(false))
             {
-                Console.WriteLine($"{word.Key}: {word.Value}"); // world: last
+                Console.WriteLine($"{word}: {freq}");
             }
 
-            //6 Display longest word and the number of frequency
-            var longestWord = wordCounts.OrderByDescending(w => w.Key.Length).First();
-            Console.WriteLine($"\nLongest word: {longestWord.Key} ({longestWord.Key.Length} characters)"); // Longest word: conventionalities (17 characters)
+            //6 Display longest word and its frequency
+            var orderedWords = wordList.GetUniqueWords();
+            var longestWord = orderedWords.OrderByDescending(w => w.Length).First();
+            Console.WriteLine($"\nLongest word: {longestWord} ({longestWord.Length} characters, frequency: {wordList.GetWordFrequency(longestWord)})");
 
             //7 Display most frequent word and its frequency
-            var mostFrequentWord = wordCounts.OrderByDescending(w => w.Value).First();
-            Console.WriteLine($"\nMost frequent word: {mostFrequentWord.Key} ({mostFrequentWord.Value} times)"); // the: 352 times
+            var mostFrequent = wordList.GetWordsOrderedBy(false).First();
+            Console.WriteLine($"\nMost frequent word: {mostFrequent.word} ({mostFrequent.frequency} times)");
 
             //8 Display the file line number where a specific word is found
             string searchWord = "Sherlock";
@@ -88,8 +84,9 @@ namespace starterCode
 
             // 9 Display the frequency of a specific word
             string specificWord = "Sherlock";
-            if (wordCounts.ContainsKey(specificWord.ToLower()))
-                Console.WriteLine($"\nFrequency of {specificWord}: {wordCounts[specificWord.ToLower()]}"); // Frequency of Sherlock: 1
+            int frequency = wordList.GetWordFrequency(specificWord);
+            if (frequency > 0)
+                Console.WriteLine($"\nFrequency of {specificWord}: {frequency}");
             else
                 Console.WriteLine($"\n{specificWord} not found in {fileName}");
         }
@@ -107,7 +104,7 @@ namespace starterCode
             char[] delimiters = { ' ', ',', '"', ':', ';', '?', '!', '-', '.', '\'', '*' };
             bool found = false;
             
-            for (int i = 0; i < linesInFile.Length; i++)
+            for (int i = 0; i < linesInFile?.Length; i++)
             {
                 string[] wordsInLine = linesInFile[i].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string word in wordsInLine)
