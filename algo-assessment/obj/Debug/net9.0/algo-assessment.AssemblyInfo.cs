@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("algo-assessment")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+28081cde9e71d069a727fa9a75f455b133436320")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2aab1161d7ce0e25ce0d196b9cf3311112efc5dd")]
 [assembly: System.Reflection.AssemblyProductAttribute("algo-assessment")]
 [assembly: System.Reflection.AssemblyTitleAttribute("algo-assessment")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
