@@ -17,7 +17,11 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-[Bb]in/
+
+# Exclude bin directory but keep .txt files
+bin/**
+!bin/**/*.txt
+
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
