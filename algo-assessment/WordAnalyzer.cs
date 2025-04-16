@@ -22,13 +22,17 @@ namespace algo_assessment
         private void ProcessWords()
         {
             char[] delimiters = { ' ', ',', '"', ':', ';', '?', '!', '-', '.', '\'', '*' };
-            foreach (string line in linesInFile)
+            // Iterate with index to get line number
+            for (int i = 0; i < linesInFile.Length; i++)
             {
+                string line = linesInFile[i];
+                int lineNumber = i + 1; // Line numbers are 1-based
                 string[] wordsInLine = line.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string word in wordsInLine)
                 {
                     if (IsWord(word))
-                        wordTree.AddWord(word);
+                        // Pass the word and its line number to AddWord
+                        wordTree.AddWord(word, lineNumber);
                 }
             }
         }
@@ -83,27 +87,34 @@ namespace algo_assessment
             Console.WriteLine($"\nMost frequent word: {mostFrequent.word} ({mostFrequent.frequency} times)");
         }
 
+        
         public void DisplayWordLineNumbers(string searchWord)
         {
             searchWord = searchWord.ToLower();
-            Console.WriteLine($"\nSearching for '{searchWord}' in {fileName}:");
-            char[] delimiters = { ' ', ',', '"', ':', ';', '?', '!', '-', '.', '\'', '*' };
-            bool found = false;
+            List<int> lineNumbers = wordTree.GetLineNumbersForWord(searchWord);
 
-            for (int i = 0; i < linesInFile.Length; i++)
+            Console.WriteLine($"\nOccurrences of '{searchWord}' found on lines:");
+
+            if (lineNumbers.Count > 0)
             {
-                string[] wordsInLine = linesInFile[i].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string word in wordsInLine)
+                // Display the line numbers
+                Console.WriteLine(string.Join(", ", lineNumbers));
+
+                // Optionally, display the actual lines (can be slow for large files/many occurrences)
+                Console.WriteLine("\nLines containing the word:");
+                foreach (int lineNumber in lineNumbers)
                 {
-                    if (IsWord(word) && word.ToLower() == searchWord)
+                    // Adjust for 0-based array index
+                    if (lineNumber > 0 && lineNumber <= linesInFile.Length)
                     {
-                        found = true;
-                        Console.WriteLine($"Found at line {i + 1}: {linesInFile[i].Trim()}");
+                        Console.WriteLine($"Line {lineNumber}: {linesInFile[lineNumber - 1].Trim()}");
                     }
                 }
             }
-            if (!found)
+            else
+            {
                 Console.WriteLine($"Word '{searchWord}' not found in the file.");
+            }
         }
 
         public void DisplaySpecificWordFrequency(string specificWord)

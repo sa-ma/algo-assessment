@@ -3,21 +3,21 @@ namespace algo_assessment
     public class BinarySearchTree
     {
         // Private node class for each element in the tree
-        // Each node contains a word, its frequency, and references to left and right children.
         private class Node
         {
             // storing the word in lower case for comparison purposes
             public string Word { get; set; }
             public int Frequency { get; set; }
+            public List<int> LineNumbers { get; private set; } // Store line numbers
             public Node? Left { get; set; }
             public Node? Right { get; set; }
 
-            // Creates a new node with the given word and initializes frequency to 1
-            // using 1 as frequency because it is a new word
-            public Node(string word)
+            // Creates a new node with the given word and initial line number
+            public Node(string word, int lineNumber)
             {
                 Word = word.ToLower();
                 Frequency = 1;
+                LineNumbers = new List<int> { lineNumber }; // Initialize with the first line number
                 Left = null;
                 Right = null;
             }
@@ -28,55 +28,58 @@ namespace algo_assessment
         // Tracks the number of unique words in the tree
         public int Count { get; private set; }
 
-        // Adds a word to the binary search tree or increments its frequency if it already exists
-        public void AddWord(string word)
+        // Adds a word and its line number to the binary search tree
+        public void AddWord(string word, int lineNumber)
         {
             word = word.ToLower();
             
-            // If tree is empty, create the root node
             if (root == null)
             {
-                root = new Node(word);
+                root = new Node(word, lineNumber); 
                 Count++;
                 return;
             }
 
-            AddWordRecursive(root, word);
+            AddWordRecursive(root, word, lineNumber); 
         }
 
-        // recursive method to add a word to the appropriate position in the tree
-        private void AddWordRecursive(Node node, string word)
+        // recursive method to add a word and its line number
+        private void AddWordRecursive(Node node, string word, int lineNumber)
         {
-            // this is where we decide where to place the new word
             int comparison = string.Compare(word, node.Word, StringComparison.OrdinalIgnoreCase);
 
             if (comparison == 0)
             {
                 node.Frequency++;
+                // Add line number if it's not already recorded for this word
+                if (!node.LineNumbers.Contains(lineNumber))
+                {
+                    node.LineNumbers.Add(lineNumber);
+                    node.LineNumbers.Sort(); // Keep line numbers sorted
+                }
             }
-
             else if (comparison < 0)
             {
                 if (node.Left == null)
                 {
-                    node.Left = new Node(word);
+                    node.Left = new Node(word, lineNumber); 
                     Count++;
                 }
                 else
                 {
-                    AddWordRecursive(node.Left, word);
+                    AddWordRecursive(node.Left, word, lineNumber); 
                 }
             }
             else
             {
                 if (node.Right == null)
                 {
-                    node.Right = new Node(word);
+                    node.Right = new Node(word, lineNumber); 
                     Count++;
                 }
                 else
                 {
-                    AddWordRecursive(node.Right, word);
+                    AddWordRecursive(node.Right, word, lineNumber); // Pass line number
                 }
             }
         }
@@ -94,7 +97,7 @@ namespace algo_assessment
         // Performs in-order traversal to collect words in alphabetical order
         static private void InOrderTraversal(Node? node, List<string> words)
         {
-            if (node == null) return;  // Base case: empty subtree
+            if (node == null) return; 
 
             // Recursively traverse left subtree
             InOrderTraversal(node.Left, words);
@@ -150,6 +153,27 @@ namespace algo_assessment
                 return GetWordFrequencyRecursive(node.Left, word);
             else
                 return GetWordFrequencyRecursive(node.Right, word);
+        }
+
+        private Node? FindNodeRecursive(Node? node, string word)
+        {
+            if (node == null) return null;
+
+            int comparison = string.Compare(word, node.Word, StringComparison.OrdinalIgnoreCase);
+
+            if (comparison == 0)
+                return node;
+            else if (comparison < 0)
+                return FindNodeRecursive(node.Left, word);
+            else
+                return FindNodeRecursive(node.Right, word);
+        }
+
+        // Returns the list of line numbers for a specific word
+        public List<int> GetLineNumbersForWord(string word)
+        {
+            Node? node = FindNodeRecursive(root, word.ToLower());
+            return node?.LineNumbers ?? new List<int>(); // Return empty list if word not found
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     internal class Program
     {
-        static string fileName = "sherlock.txt"; //file to read
+        static string fileName = "mobydick.txt"; //location of file to read
         static string outputFileName = "unique_words.txt"; //file to write unique words
 
         static void Main(string[] args)
@@ -96,7 +96,6 @@
         }
 
         // Displays the unique words from the output file
-        
         static void DisplayUniqueWords(string outputFile)
         {
             try
